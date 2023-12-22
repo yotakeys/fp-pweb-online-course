@@ -1,0 +1,14 @@
+[
+    {
+      "id": 1,
+      "name": "Free",
+      "description" : "Start learning something new with free access",
+      "price" : 0
+    },
+    {
+      "id" : 2,
+      "name" : "Basic",
+      "description" : "Build in-demand technical skills for work or a personal project",
+      "price" : 100000
+    }
+]

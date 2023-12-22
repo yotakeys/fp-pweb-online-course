@@ -1,0 +1,18 @@
+[
+    {
+      "id": 1,
+      "name": "PENDING"
+    },
+    {
+        "id": 2,
+        "name": "REJECTED"
+    },
+    {
+        "id": 3,
+        "name": "CHANGES NEEDED"
+    },
+    {
+      "id" : 4,
+      "name" : "APPROVED"
+    }
+]
