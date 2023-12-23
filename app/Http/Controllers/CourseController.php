@@ -67,11 +67,19 @@ class CourseController extends Controller
     }
 
 
-    public function getAllCourseAdmin()
+    public function getAllCourseAdmin(Request $request)
     {
-        $courses = Course::with('sections', 'plan')->orderBy('updated_at', 'desc')->get();
+        $request->validate([
+            'search' => 'nullable|max:255',
+        ]);
 
-        return view('admin.list-course', ['courses' => $courses]);
+        if ($request->search) {
+            $courses = Course::with('sections', 'plan')->where('title', 'like', '%' . $request->search . '%')->orderBy('updated_at', 'desc')->get();
+            return view('admin.list-course', ['courses' => $courses, 'search' => $request->search]);
+        } else {
+            $courses = Course::with('sections', 'plan')->orderBy('updated_at', 'desc')->get();
+            return view('admin.list-course', ['courses' => $courses]);
+        }
     }
 
     public function courseDetail(int $id)
