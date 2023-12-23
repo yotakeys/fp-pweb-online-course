@@ -145,6 +145,38 @@ class CourseController extends Controller
 
         return view('reader.catalog', ['courses' => $courses]);
     }
+    public function adminCoursefilter(Request $request)
+    {
+        $price = $request->input('price');
+
+        $courses = Course::when($price, function ($query, $price) {
+            if (in_array('free', $price)) {
+                $query->where('plan_id', 1);
+            }
+
+            if (in_array('paid', $price)) {
+                $query->orWhere('plan_id', 2);
+            }
+        })->get();
+
+        return view('admin.list-course', compact('courses'));
+    }
+
+    public function adminCourseSort(Request $request)
+    {
+        $sort = $request->input('sort');
+
+        $courses = Course::with('sections', 'plan')
+            ->when($sort == 'recent', function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
+            ->when($sort == 'popular', function ($query) {
+                $query->inRandomOrder();
+            })
+            ->get();
+
+        return view('admin.list-course', ['courses' => $courses]);
+    }
 
     public function catalogFilter(Request $request)
     {
