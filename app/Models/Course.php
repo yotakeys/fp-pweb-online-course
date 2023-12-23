@@ -29,4 +29,10 @@ class Course extends Model
     {
         return $this->belongsTo(Plan::class);
     }
+
+    public function delete()
+    {
+        $this->sections()->delete();
+        return parent::delete();
+    }
 }
