@@ -14,12 +14,12 @@ class SectionController extends Controller
         return view('section.section-by-course-id', ['sections' => $sections]);
     }
 
-    public function formAddSectionByCourseId(int $courseId)
+    public function formAddSection(int $courseId)
     {
-        return view('section.section-add-by-course-id', ['courseId' => $courseId]);
+        return view('admin.add-section', ['courseId' => $courseId]);
     }
 
-    public function addSectionByCourseId(Request $request, int $courseId)
+    public function addSection(Request $request, int $courseId)
     {
         $request->validate([
             'title' => 'required',
@@ -32,5 +32,46 @@ class SectionController extends Controller
             'text' => $request->text,
             'course_id' => $request->course_id,
         ]);
+
+        return redirect()->route('admin.course.detail', ['id' => $courseId])->with('success', 'Section added successfully');
+    }
+
+    public function formEditSection(int $courseId, int $sectionId)
+    {
+        $section = Section::find($sectionId);
+
+        return view('admin.edit-section', ['section' => $section, 'courseId' => $courseId]);
+    }
+
+    public function editSection(Request $request, int $courseId, int $sectionId)
+    {
+        $request->validate([
+            'title' => 'required',
+            'text' => 'required',
+            'course_id' => 'required',
+        ]);
+
+        $section = Section::find($sectionId);
+        $section->title = $request->title;
+        $section->text = $request->text;
+        $section->course_id = $request->course_id;
+        $section->save();
+
+        return redirect()->route('admin.section.detail', ['course_id' => $courseId, 'section_id' => $sectionId])->with('success', 'Section updated successfully');
+    }
+
+    public function deleteSection(int $courseId, int $sectionId)
+    {
+        $section = Section::find($sectionId);
+        $section->delete();
+
+        return redirect()->route('admin.course.detail', ['id' => $courseId])->with('success', 'Section deleted successfully');
+    }
+
+    public function sectionDetail(int $courseId, int $sectionId)
+    {
+        $section = Section::find($sectionId);
+
+        return view('admin.section-detail', ['section' => $section, 'courseId' => $courseId]);
     }
 }

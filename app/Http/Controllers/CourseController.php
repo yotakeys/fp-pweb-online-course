@@ -66,12 +66,6 @@ class CourseController extends Controller
         return redirect()->route('admin.course.list')->with('success', 'Course deleted successfully');
     }
 
-    public function getAllCourse()
-    {
-        $courses = Course::all();
-
-        return view('course.course-all', ['courses' => $courses]);
-    }
 
     public function getAllCourseAdmin()
     {
@@ -85,12 +79,5 @@ class CourseController extends Controller
         $course = Course::with('sections', 'plan')->find($id);
 
         return view('admin.course-detail', ['course' => $course]);
-    }
-
-    public function getCourseByPlanId(int $plan_id)
-    {
-        $courses = Course::where('plan_id', $plan_id)->get();
-
-        return view('course.course-by-plan-id', ['courses' => $courses]);
     }
 }
