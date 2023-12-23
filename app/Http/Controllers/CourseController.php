@@ -18,8 +18,8 @@ class CourseController extends Controller
     public function addCourse(Request $request)
     {
         $request->validate([
-            'title' => 'required',
-            'description' => 'required',
+            'title' => 'required|min:2|max:255',
+            'description' => 'required|min:8|max:255',
             'plan_id' => 'required',
         ]);
 
@@ -28,6 +28,8 @@ class CourseController extends Controller
             'description' => $request->description,
             'plan_id' => $request->plan_id,
         ]);
+
+        return redirect()->route('admin.course.form')->with('success', 'Course added successfully');
     }
 
     public function getAllCourse()
