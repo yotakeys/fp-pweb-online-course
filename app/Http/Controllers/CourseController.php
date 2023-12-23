@@ -11,9 +11,9 @@ class CourseController extends Controller
 {
     public function formAddCourse()
     {
-        $plans = Plan::all();
+        $plan = Plan::all();
 
-        return view('admin.add-course', ['plans' => $plans]);
+        return view('admin.add-course', ['plan' => $plan]);
     }
 
     public function addCourse(Request $request)
@@ -185,9 +185,10 @@ class CourseController extends Controller
         $course = Course::with('sections', 'plan')->find($id);
         $result = Transaksi::where('user_id', auth()->user()->id)
             ->where('status_id', 4)
+            ->where('plan_id', $course->plan_id)
             ->first();
 
-        if (!$result && $course->plan_id == 2) {
+        if (!$result && $course->plan_id != 1) {
             return redirect()->route('reader.pricing')->with('error', 'You must buy a plan first');
         }
 

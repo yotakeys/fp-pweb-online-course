@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Section;
+use App\Models\Course;
+use App\Models\Transaksi;
 
 class SectionController extends Controller
 {
@@ -77,6 +79,15 @@ class SectionController extends Controller
 
     public function sectionDetailReader(int $courseId, int $sectionId)
     {
+        $course = Course::find($courseId);
+        $result = Transaksi::where('user_id', auth()->user()->id)
+            ->where('status_id', 4)
+            ->where('plan_id', $course->plan_id)
+            ->first();
+
+        if (!$result && $course->plan_id != 1) {
+            return redirect()->route('reader.pricing')->with('error', 'You must buy a plan first');
+        }
         $section = Section::find($sectionId);
 
         return view('reader.section-detail', ['section' => $section, 'courseId' => $courseId]);
