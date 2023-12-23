@@ -11,9 +11,9 @@ class CourseController extends Controller
 {
     public function formAddCourse()
     {
-        $plan = Plan::all();
+        $plans = Plan::all();
 
-        return view('admin.add-course', ['plan' => $plan]);
+        return view('admin.add-course', ['plans' => $plans]);
     }
 
     public function addCourse(Request $request)
