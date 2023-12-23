@@ -68,10 +68,17 @@ class SectionController extends Controller
         return redirect()->route('admin.course.detail', ['id' => $courseId])->with('success', 'Section deleted successfully');
     }
 
-    public function sectionDetail(int $courseId, int $sectionId)
+    public function sectionDetailAdmin(int $courseId, int $sectionId)
     {
         $section = Section::find($sectionId);
 
         return view('admin.section-detail', ['section' => $section, 'courseId' => $courseId]);
+    }
+
+    public function sectionDetailReader(int $courseId, int $sectionId)
+    {
+        $section = Section::find($sectionId);
+
+        return view('reader.section-detail', ['section' => $section, 'courseId' => $courseId]);
     }
 }

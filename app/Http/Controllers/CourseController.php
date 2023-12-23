@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\Plan;
+use App\Models\Transaksi;
 
 class CourseController extends Controller
 {
@@ -82,10 +83,114 @@ class CourseController extends Controller
         }
     }
 
-    public function courseDetail(int $id)
+    function getAllCourseReader(Request $request)
+    {
+        $request->validate([
+            'search' => 'nullable|max:255',
+        ]);
+
+        if ($request->search) {
+            $courses = Course::with('sections', 'plan')->where('title', 'like', '%' . $request->search . '%')->orderBy('updated_at', 'desc')->get();
+            return view('reader.catalog', ['courses' => $courses, 'search' => $request->search]);
+        } else {
+            $courses = Course::with('sections', 'plan')->orderBy('updated_at', 'desc')->get();
+            return view('reader.catalog', ['courses' => $courses]);
+        }
+    }
+
+    public function courseDetailAdmin(int $id)
     {
         $course = Course::with('sections', 'plan')->find($id);
 
         return view('admin.course-detail', ['course' => $course]);
+    }
+
+    public function catalogIndex()
+    {
+        $courses = Course::with('sections', 'plan')
+            ->get();
+
+        return view('catalog', ['courses' => $courses]);
+    }
+
+    public function readerCatalogfilter(Request $request)
+    {
+        $price = $request->input('price');
+
+        $courses = Course::when($price, function ($query, $price) {
+            if (in_array('free', $price)) {
+                $query->where('plan_id', 1);
+            }
+
+            if (in_array('paid', $price)) {
+                $query->orWhere('plan_id', 2);
+            }
+        })->get();
+
+        return view('reader.catalog', compact('courses'));
+    }
+
+    public function readerCatalogSort(Request $request)
+    {
+        $sort = $request->input('sort');
+
+        $courses = Course::with('sections', 'plan')
+            ->when($sort == 'recent', function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
+            ->when($sort == 'popular', function ($query) {
+                $query->inRandomOrder();
+            })
+            ->get();
+
+        return view('reader.catalog', ['courses' => $courses]);
+    }
+
+    public function catalogFilter(Request $request)
+    {
+        $price = $request->input('price');
+
+        $courses = Course::when($price, function ($query, $price) {
+            if (in_array('free', $price)) {
+                $query->where('plan_id', 1);
+            }
+
+            if (in_array('paid', $price)) {
+                $query->orWhere('plan_id', 2);
+            }
+        })->get();
+
+        return view('catalog', compact('courses'));
+    }
+
+    public function catalogSort(Request $request)
+    {
+        $sort = $request->input('sort');
+
+        $courses = Course::with('sections', 'plan')
+            ->when($sort == 'recent', function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
+            ->when($sort == 'popular', function ($query) {
+                $query->inRandomOrder();
+            })
+            ->get();
+
+        return view('catalog', ['courses' => $courses]);
+    }
+
+    public function courseDetailReader(int $id)
+    {
+
+        $course = Course::with('sections', 'plan')->find($id);
+        $result = Transaksi::where('user_id', auth()->user()->id)
+            ->where('status_id', 4)
+            ->first();
+
+        if (!$result && $course->plan_id == 2) {
+            return redirect()->route('reader.pricing')->with('error', 'You must buy a plan first');
+        }
+
+        return view('reader.course-detail', ['course' => $course]);
     }
 }
