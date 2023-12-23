@@ -12,7 +12,7 @@ class CourseController extends Controller
     {
         $plans = Plan::all();
 
-        return view('course.course-add', ['plans' => $plans]);
+        return view('admin.add-course', ['plans' => $plans]);
     }
 
     public function addCourse(Request $request)
@@ -35,6 +35,13 @@ class CourseController extends Controller
         $courses = Course::all();
 
         return view('course.course-all', ['courses' => $courses]);
+    }
+
+    public function getAllCourseAdmin()
+    {
+        $courses = Course::with('sections', 'plan')->orderBy('updated_at', 'desc')->get();
+
+        return view('admin.list-course', ['courses' => $courses]);
     }
 
     public function getCourseByPlanId(int $plan_id)
