@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'admin' => \App\Http\Middleware\CheckAdmin::class,
         'reader' => \App\Http\Middleware\CheckReader::class,
+        'writer' => \App\Http\Middleware\CheckWriter::class,
         'planned' => \App\Http\Middleware\IsPlanned::class,
         'subscribed' => \App\Http\Middleware\IsSubscribed::class,
         'transaksi.owner' => \App\Http\Middleware\IsOwnerTransaksi::class,
