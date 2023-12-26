@@ -71,5 +71,5 @@
             </div>
         </div>
     </div>
-    @@include('admin.modal.create')
+    @include('admin.modal.create')
 </x-admin-app-layout>
